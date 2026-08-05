@@ -54,15 +54,15 @@ Your ROM needs to be in .z64 format. If it's in .n64 format, use the following t
 Lighthouse ships with a file with many standard controller mappings that can be used as-is with most controllers. If your controller isn't recognized by Lighthouse, or isn't working properly, you can create your own custom mapping using the built-in mapper in the Settings menu.
 
 ### Default keyboard configuration
-| N64 | A | B | Z | Start | Analog stick | C buttons | D-Pad |
-| - | - | - | - | - | - | - | - |
-| Keyboard | X | C | Z | Space | WASD | Arrow keys | TFGH |
+| N64 | A | B | L | R | Z | Start | Analog stick | C buttons | D-Pad |
+| - | - | - | - | - | - | - | - | - | - |
+| Keyboard | X | C | E | R | Z | Space | WASD | Arrow keys | TFGH |
 
 ### Other shortcuts
 | Keys | Action |
 | - | - |
 | ESC | Toggle menubar |
-| Ctrl+R | Reset |
+| Ctrl+R / ⌘R | Reset |
 | F11 | Fullscreen |
 | Tab | Toggle Alternate assets |
 
@@ -108,5 +108,5 @@ If you want to playtest a continuous integration build, you can find them at the
 
 # Special Thanks:
 
-* GiantJigglypuff3 for their extensive and continued Banjo Decomp documentation  
+* The Banjo decomp team
 * Fredomato, scorched11 for work on rando

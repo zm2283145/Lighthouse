@@ -907,7 +907,8 @@ bool CVarColorPicker(const char* label, const char* cvarName, Color_RGBA8 defaul
     ImGui::AlignTextToFramePadding();
     if (showReset) {
         ImGui::SameLine();
-        std::string uniqueTag = "Reset##" + std::string(label);
+        // Tag off the CVar, not the label.
+        std::string uniqueTag = "Reset##" + std::string(cvarName) + ".Reset";
         if (UIWidgets::Button(uniqueTag.c_str(),
                               UIWidgets::ButtonOptions({ { .tooltip = "Resets this color to its default value" } })
                                   .Color(themeColor)
@@ -924,7 +925,7 @@ bool CVarColorPicker(const char* label, const char* cvarName, Color_RGBA8 defaul
     }
     if (showRandom) {
         ImGui::SameLine();
-        std::string uniqueTag = "Random##" + std::string(label);
+        std::string uniqueTag = "Random##" + std::string(cvarName) + ".Random";
         if (UIWidgets::Button(uniqueTag.c_str(),
                               UIWidgets::ButtonOptions({ { .tooltip = "Generates a random color value to use" } })
                                   .Color(themeColor)
