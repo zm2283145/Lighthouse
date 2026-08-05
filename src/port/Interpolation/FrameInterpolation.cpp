@@ -62,8 +62,8 @@ struct FrameTree {
     std::vector<ToMtxData> toMtxs;
     std::vector<CameraProjRotData> projRots;
     std::vector<SpriteDrawData> sprites;
-    std::unordered_map<uint64_t, uint32_t> sigToToMtx;
-    std::unordered_map<uint64_t, uint32_t> sigToSprite;
+    robin_hood::unordered_map<uint64_t, uint32_t> sigToToMtx;
+    robin_hood::unordered_map<uint64_t, uint32_t> sigToSprite;
     std::vector<ScopeFrame> scopeStack;
     float cameraPos[3] = { 0.0f, 0.0f, 0.0f };
     bool hasCameraPos = false;
@@ -129,7 +129,7 @@ bool gRecording = false;
 bool gShouldInterpolate = true;
 int gNoInterpolateDepth = 0;
 
-std::unordered_map<const void*, uint64_t> gIdMap;
+robin_hood::unordered_map<const void*, uint64_t> gIdMap;
 uint64_t gNextId = 1;
 
 InterpolationCache gCache;
@@ -464,8 +464,8 @@ void BuildInterpolationCache() {
     const std::vector<ToMtxData>& prevToMtxs = gRenderPrev->toMtxs;
     const std::vector<SpriteDrawData>& currSprites = gRenderCurr->sprites;
     const std::vector<SpriteDrawData>& prevSprites = gRenderPrev->sprites;
-    const std::unordered_map<uint64_t, uint32_t>& prevSigMap = gRenderPrev->sigToToMtx;
-    const std::unordered_map<uint64_t, uint32_t>& prevSpriteMap = gRenderPrev->sigToSprite;
+    const robin_hood::unordered_map<uint64_t, uint32_t>& prevSigMap = gRenderPrev->sigToToMtx;
+    const robin_hood::unordered_map<uint64_t, uint32_t>& prevSpriteMap = gRenderPrev->sigToSprite;
 
     gCache.pairedToMtxs.reserve(currToMtxs.size());
     gCache.pairedSprites.reserve(currSprites.size());
@@ -537,7 +537,7 @@ void BuildInterpolationCache() {
 
 // Rebuilds the sprite modelview the same way sprite/render.c composes it, so
 // a replayed matrix can't drift from what the game would have written.
-void emitSprite(const SpriteDrawData& L, std::unordered_map<Mtx*, MtxF>& replacements) {
+void emitSprite(const SpriteDrawData& L, robin_hood::unordered_map<Mtx*, MtxF>& replacements) {
     if (L.dst == nullptr) {
         return;
     }
@@ -610,7 +610,7 @@ void emitSprite(const SpriteDrawData& L, std::unordered_map<Mtx*, MtxF>& replace
 
 } // namespace
 
-void FrameInterpolation_Interpolate(float t, std::unordered_map<Mtx*, MtxF>& replacements) {
+void FrameInterpolation_Interpolate(float t, robin_hood::unordered_map<Mtx*, MtxF>& replacements) {
     replacements.clear();
 
     if (!gRenderShould) {

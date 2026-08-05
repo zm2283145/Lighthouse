@@ -360,6 +360,7 @@ FontLetter *print_getLettersFromFont(BKSprite *alphaMask, BKSprite *textureSprit
             }
             break;
         case SPRITE_TYPE_I4://L802F4E24
+        case SPRITE_TYPE_IA4:
             {
                 chunkPtr = (BKSpriteTextureBlock *) (font + 1);
                 for( i = 0; i < font->chunkCnt; i++){
@@ -372,7 +373,43 @@ FontLetter *print_getLettersFromFont(BKSprite *alphaMask, BKSprite *textureSprit
                 }
             }
             break;
-        default://L802F4EC0
+        case SPRITE_TYPE_CI4:
+            {
+                chunkPtr = (BKSpriteTextureBlock *) (font + 1);
+                chunkDataPtr = (u8 *)chunkPtr;
+                while((uintptr_t)chunkDataPtr % 8)
+                    chunkDataPtr++;
+
+                palDataPtr = chunkDataPtr;
+                chunkPtr = (BKSpriteTextureBlock *) (palDataPtr + 2*0x100);
+
+                for(i= 0; i < font->chunkCnt; i++){
+
+                    chunkDataPtr = (u8*)(chunkPtr + 1);
+                    while((uintptr_t)chunkDataPtr % 8)
+                        chunkDataPtr++;
+
+                    letters[i].sprite = chunkPtr;
+                    letters[i].palette = palDataPtr;
+                    chunkSize = chunkPtr->w*chunkPtr->h;
+                    chunkPtr = (BKSpriteTextureBlock *)(chunkDataPtr + chunkSize/2);
+                }
+            }
+            break;
+        case SPRITE_TYPE_RGBA16:
+            {
+                chunkPtr = (BKSpriteTextureBlock *)(font + 1);
+                for( i = 0; i < font->chunkCnt; i++){
+                    letters[i].sprite = chunkPtr;
+                    chunkDataPtr = (u8*)(chunkPtr + 1);
+                    chunkSize = chunkPtr->w*chunkPtr->h;
+                    while((uintptr_t)chunkDataPtr % 8)
+                        chunkDataPtr++;
+                    chunkPtr = (BKSpriteTextureBlock *) (chunkDataPtr + chunkSize*2);
+                }
+            }
+            break;
+        default: //L802F4EC0
             {
                 chunkPtr = (BKSpriteTextureBlock *)(font + 1);
                 for( i = 0; i < font->chunkCnt; i++){

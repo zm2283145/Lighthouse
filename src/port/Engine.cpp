@@ -136,7 +136,11 @@ OTRVersion DetectOTRVersion(std::string fileName) {
 }
 
 bool VerifyArchiveVersion(OTRVersion version) {
+#ifndef __vita__
     return version.major == gBuildVersionMajor && version.minor == gBuildVersionMinor;
+#else
+	return true;
+#endif
 }
 
 GameEngine::GameEngine() {
@@ -377,9 +381,10 @@ void GameEngine::FinishInit() {
         static_cast<spdlog::level::level_enum>(CVarGetInteger(CVAR_DEVELOPER_TOOLS("LogLevel"), defaultLogLevel));
     context->InitLogging(logLevel, logLevel);
     Ship::Context::GetRawInstance()->GetLogger()->set_pattern("[%H:%M:%S.%e] [%s:%#] [%l] %v");
+#ifndef __vita__
     SPDLOG_INFO("Starting Lighthouse version {} (Branch: {} | Commit: {})", (char*)gBuildVersion, (char*)gGitBranch,
                 (char*)gGitCommitHash);
-
+#endif
     context->InitFileDropMgr();
     context->InitCrashHandler();
     context->InitEventSystem();
@@ -415,7 +420,7 @@ void GameEngine::FinishInit() {
     Instance->AudioInit();
     // Instance->LoadDictionary();
     // Instance->LoadPlayerAnims();
-#if defined(__SWITCH__) || defined(__WIIU__)
+#if defined(__SWITCH__) || defined(__WIIU__) || defined(__vita__)
     CVarRegisterInteger(CVAR_IMGUI_CONTROLLER_NAV, 1); // always enable controller nav on switch/wii u
 #endif
 }
@@ -497,8 +502,9 @@ void GameEngine::RunExtract(int argc, char* argv[]) {
             std::filesystem::remove(archive);
         }
     }
-
+#ifndef __vita__
     std::shared_ptr<BS::thread_pool> threadPool = std::make_shared<BS::thread_pool>(1);
+#endif
     while (!extractDone) {
         if (GameExtractor::sCustomCodePromptRequested.load()) {
             GameExtractor::sCustomCodePromptRequested = false;
@@ -534,7 +540,7 @@ void GameEngine::RunExtract(int argc, char* argv[]) {
                 if (portArchiveVersionMatch) {
 #ifdef _WIN32
                     extractStep = ES_WINDOWS;
-#elif (defined(__WIIU__) || defined(__SWITCH__))
+#elif (defined(__WIIU__) || defined(__SWITCH__)) || defined(__vita__)
                     extractStep = ES_VERIFY;
 #else
                     extractStep = ES_EXTRACT;
@@ -581,7 +587,9 @@ void GameEngine::RunExtract(int argc, char* argv[]) {
                                 "Lighthouse Path Error",
                                 "Lighthouse is running in a temp folder.\nExtract the .zip and run again.", "OK", "",
                                 [&]() {
+#ifndef __vita__
                                     threadPool = nullptr;
+#endif
                                     lhFast3dWindow = nullptr;
                                     context = nullptr;
                                     exit(0);
@@ -609,7 +617,9 @@ void GameEngine::RunExtract(int argc, char* argv[]) {
                                         fclose(tfile);
                                     }
                                     PathTestCleanup();
+#ifndef __vita__
                                     threadPool = nullptr;
+#endif
                                     lhFast3dWindow = nullptr;
                                     context = nullptr;
                                     exit(0);
@@ -622,7 +632,9 @@ void GameEngine::RunExtract(int argc, char* argv[]) {
                                     "Lighthouse does not have proper file permissions.\nPlease move it to a "
                                     "folder that does and run again.",
                                     "OK", "", [&]() {
+#ifndef __vita__
                                         threadPool = nullptr;
+#endif
                                         lhFast3dWindow = nullptr;
                                         context = nullptr;
                                         exit(0);
@@ -640,7 +652,9 @@ void GameEngine::RunExtract(int argc, char* argv[]) {
                                 "Please move it to a folder outside of OneDrive, like the root of a\n"
                                 "drive (e.g. \"C:\\Games\\Lighthouse\").",
                                 "OK", "", [&]() {
+#ifndef __vita__
                                     threadPool = nullptr;
+#endif
                                     lhFast3dWindow = nullptr;
                                     context = nullptr;
                                     exit(0);
@@ -661,7 +675,7 @@ void GameEngine::RunExtract(int argc, char* argv[]) {
                 break;
             }
             case ES_EXTRACT_ARGS: {
-#if !defined(__SWITCH__) && !defined(__WIIU__)
+#if !defined(__SWITCH__) && !defined(__WIIU__) && !defined(__vita__)
                 if (args.size() == 0) {
                     LighthouseGui::RegisterPopup(
                         "Run Lighthouse", "All files have been processed. Run Lighthouse?", "Yes", "No",
@@ -723,7 +737,9 @@ void GameEngine::RunExtract(int argc, char* argv[]) {
                                 "No O2R Files", "No O2R files found. Generate one now?", "Yes", "No",
                                 [&]() { promptStep = PS_LOCAL; },
                                 [&]() {
+#ifndef __vita__
                                     threadPool = nullptr;
+#endif
                                     lhFast3dWindow = nullptr;
                                     context = nullptr;
                                     exit(0);
@@ -769,10 +785,14 @@ void GameEngine::RunExtract(int argc, char* argv[]) {
                                 extracting = true;
                                 extractStarted = true;
                                 file = extract.GetRomPath();
+#ifndef __vita__
                                 (void)threadPool->submit_task([&]() -> void {
+#endif
                                     extract.GenerateOTR(extractCount, totalExtract, "bk");
                                     extracting = false;
+#ifndef __vita__
                                 });
+#endif
                                 continue; // stay in PS_FIRST; the completion check fires when done
                             }
                             // Otherwise open the picker (native dialog on desktop, ImGui browser on
@@ -790,10 +810,14 @@ void GameEngine::RunExtract(int argc, char* argv[]) {
                         extracting = true;
                         extractStarted = true;
                         file = extract.GetRomPath();
+#ifndef __vita__
                         (void)threadPool->submit_task([&]() -> void {
+#endif
                             extract.GenerateOTR(extractCount, totalExtract, "bk");
                             extracting = false;
+#ifndef __vita__
                         });
+#endif
                         continue;
                     }
                     case PS_FIRST_WAIT: {
@@ -809,10 +833,14 @@ void GameEngine::RunExtract(int argc, char* argv[]) {
                         extractStarted = true;
                         file = extract.GetRomPath();
                         promptStep = PS_FIRST; // so the ES_EXTRACT/PS_FIRST completion check fires
+#ifndef __vita__
                         (void)threadPool->submit_task([&]() -> void {
+#endif
                             extract.GenerateOTR(extractCount, totalExtract, "bk");
                             extracting = false;
+#ifndef __vita__
                         });
+#endif
                         continue;
                     }
                     default:
@@ -845,7 +873,9 @@ void GameEngine::RunExtract(int argc, char* argv[]) {
                             errorMsg = "No ROM O2R file detected.\nPlease generate a ROM O2R and relaunch.";
                         }
                         LighthouseGui::RegisterPopup("Extraction Error", errorMsg.c_str(), "OK", "", [&]() {
+#ifndef __vita__
                             threadPool = nullptr;
+#endif
                             lhFast3dWindow = nullptr;
                             context = nullptr;
                             exit(0);
@@ -863,7 +893,9 @@ void GameEngine::RunExtract(int argc, char* argv[]) {
 
     render:
         if (!WindowIsRunning()) {
+#ifndef __vita__
             threadPool = nullptr;
+#endif
             lhFast3dWindow = nullptr;
             context = nullptr;
             exit(0);
@@ -952,7 +984,9 @@ void GameEngine::RunExtract(int argc, char* argv[]) {
         lhFast3dWindow->EndFrame();
         ImGui::PopStyleColor(2);
     }
+#ifndef __vita__
     threadPool = nullptr;
+#endif
 
 #ifdef __SWITCH__
     Ship::Switch::Init(Ship::PreInitPhase);
@@ -960,7 +994,7 @@ void GameEngine::RunExtract(int argc, char* argv[]) {
     Ship::WiiU::Init(appShortName);
 #endif
 
-#if not defined(__SWITCH__) && not defined(__WIIU__)
+#if not defined(__SWITCH__) && not defined(__WIIU__) && not defined(__vita__)
     CheckAndCreateModFolder();
 #endif
     if (menuWasVisible) {
@@ -971,13 +1005,13 @@ void GameEngine::RunExtract(int argc, char* argv[]) {
 ImFont* GameEngine::CreateFontWithSize(float size, std::string fontPath) {
     auto mImGuiIo = &ImGui::GetIO();
     ImFont* font;
-    if (fontPath == "") {
+    //if (fontPath == "") {
         ImFontConfig fontCfg = ImFontConfig();
         fontCfg.OversampleH = fontCfg.OversampleV = 1;
         fontCfg.PixelSnapH = true;
         fontCfg.SizePixels = size;
         font = mImGuiIo->Fonts->AddFontDefault(&fontCfg);
-    } else {
+    /*} else {
         auto initData = std::make_shared<Ship::ResourceInitData>();
         ImFontConfig config;
         config.FontDataOwnedByAtlas = false;
@@ -990,7 +1024,7 @@ ImFont* GameEngine::CreateFontWithSize(float size, std::string fontPath) {
             Ship::Context::GetRawInstance()->GetResourceManager()->LoadResource(fontPath, false, initData));
         font =
             mImGuiIo->Fonts->AddFontFromMemoryTTF(fontData->Data, static_cast<int>(fontData->DataSize), size, &config);
-    }
+    }*/
     // FontAwesome fonts need to have their sizes reduced by 2.0f/3.0f in order to align correctly
     float iconFontSize = size * 2.0f / 3.0f;
     static const ImWchar sIconsRanges[] = { ICON_MIN_FA, ICON_MAX_16_FA, 0 };
@@ -1239,7 +1273,7 @@ long long sLastSubFrameNs = 0;
 long long sPassBudgetNs = 0;
 } // namespace
 
-void GameEngine::RunCommands(Gfx* Commands, const std::vector<std::unordered_map<Mtx*, MtxF>>& mtx_replacements,
+void GameEngine::RunCommands(Gfx* Commands, const std::vector<robin_hood::unordered_map<Mtx*, MtxF>>& mtx_replacements,
                              size_t frameCount) {
     auto wnd = std::dynamic_pointer_cast<Fast::Fast3dWindow>(Ship::Context::GetRawInstance()->GetWindow());
 
@@ -1379,7 +1413,7 @@ void GameEngine::ProcessGfxCommands(Gfx* commands) {
     // Persistent across frames so each map's bucket array survives.
     // Interpolate clears entries but keeps the buckets, saving thousands
     // of node allocations per tick at high refresh rates.
-    static std::vector<std::unordered_map<Mtx*, MtxF>> mtx_replacements;
+    static std::vector<robin_hood::unordered_map<Mtx*, MtxF>> mtx_replacements;
 
     const SubframePacing pacing = ComputeSubframePacing();
     const int subframesPerTick = pacing.subframes;

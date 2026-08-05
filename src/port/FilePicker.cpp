@@ -1,5 +1,9 @@
 #include "port/FilePicker.h"
 
+#ifdef __vita__
+#undef LIGHTHOUSE_NATIVE_FILE_DIALOG
+#endif
+
 #if LIGHTHOUSE_NATIVE_FILE_DIALOG
 #include <string>
 #include <vector>

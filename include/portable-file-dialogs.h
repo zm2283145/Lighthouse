@@ -194,7 +194,7 @@ class executor {
     std::condition_variable m_cond;
     std::mutex m_mutex;
     DWORD m_tid;
-#elif __EMSCRIPTEN__ || __NX__
+#elif __EMSCRIPTEN__ || __NX__ || __vita__
     // FIXME: do something
 #else
     pid_t m_pid = 0;
@@ -644,7 +644,7 @@ inline bool internal::executor::kill() {
                 SendMessage(hwnd, WM_COMMAND, IDNO, 0);
             }
     }
-#elif __EMSCRIPTEN__ || __NX__
+#elif __EMSCRIPTEN__ || __NX__ || __vita__
     // FIXME: do something
     return false; // cannot kill
 #else
@@ -758,7 +758,7 @@ inline bool internal::executor::ready(int timeout /* = default_wait_timeout */) 
 
         m_stdout = m_future.get();
     }
-#elif __EMSCRIPTEN__ || __NX__
+#elif __EMSCRIPTEN__ || __NX__ || __vita__
     // FIXME: do something
     (void)timeout;
 #else

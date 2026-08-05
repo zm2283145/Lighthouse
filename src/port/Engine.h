@@ -57,7 +57,7 @@ public:
         sRelaunchRequested = true;
     }
     static void RelaunchIfRequested(int argc, char* argv[]);
-    static void RunCommands(Gfx* Commands, const std::vector<std::unordered_map<Mtx*, MtxF>>& mtx_replacements,
+    static void RunCommands(Gfx* Commands, const std::vector<robin_hood::unordered_map<Mtx*, MtxF>>& mtx_replacements,
                             size_t frameCount);
     static void Destroy();
     static uint32_t GetInterpolationFPS();

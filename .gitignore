@@ -90,3 +90,9 @@ CLAUDE.md
 /build-arm64
 x64
 /x64/Debug
+
+*.elf
+*.velf
+*.zip
+*.sfo
+*.bin

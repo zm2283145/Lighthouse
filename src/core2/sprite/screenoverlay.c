@@ -217,7 +217,7 @@ void spriteRender_draw(Gfx **gfx, Vtx **vtx, BKSprite *sp, u32 frame){
 
 void spriteRender_drawWithSegment(Gfx **gfx, Vtx **vtx, BKSprite *sprite, u32 frame, u32 segment) {
     s32 ix;
-    s32 pixel_size_nibbles; //sp1C0
+    s32 pixel_size_nibbles = 0; //sp1C0
     s32 sp1BC;
     Vtx *var_a3;
     Gfx *sp1B4;
@@ -243,6 +243,10 @@ void spriteRender_drawWithSegment(Gfx **gfx, Vtx **vtx, BKSprite *sprite, u32 fr
     //get pize size in nibs
     func_80349AD0();
     if (sprite->type & SPRITE_TYPE_CI4) {
+        pixel_size_nibbles = 1;
+    } else if (sprite->type & SPRITE_TYPE_I4) {
+        pixel_size_nibbles = 1;
+    } else if (sprite->type & SPRITE_TYPE_IA4) {
         pixel_size_nibbles = 1;
     } else if (sprite->type & SPRITE_TYPE_CI8) {
         pixel_size_nibbles = 2;
@@ -312,6 +316,10 @@ void spriteRender_drawWithSegment(Gfx **gfx, Vtx **vtx, BKSprite *sprite, u32 fr
             gDPLoadTextureBlock((*gfx)++, img, G_IM_FMT_CI, G_IM_SIZ_8b, var_t2->w, temp_ra, 0, 0, 0, 0, 0, 0, 0);
         } else if (sprite->type & SPRITE_TYPE_I8) {
             gDPLoadTextureBlock((*gfx)++, img, G_IM_FMT_I, G_IM_SIZ_8b, var_t2->w, temp_ra, 0, 0, 0, 0, 0, 0, 0);
+        } else if (sprite->type & SPRITE_TYPE_I4) {
+            gDPLoadTextureBlock_4b((*gfx)++, img, G_IM_FMT_I, var_t2->w, temp_ra, 0, 0, 0, 0, 0, 0, 0);
+        } else if (sprite->type & SPRITE_TYPE_IA4) {
+            gDPLoadTextureBlock_4b((*gfx)++, img, G_IM_FMT_IA, var_t2->w, temp_ra, 0, 0, 0, 0, 0, 0, 0);
         }
 
         //generate vtx coords for texture

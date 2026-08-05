@@ -48,9 +48,11 @@ void LighthouseModalWindow::DrawElement() {
                                        ImGuiWindowFlags_NoSavedSettings)) {
             // Show the nav highlight on the default button (button1) the moment the popup opens, so a
             // gamepad/keyboard user sees the selection immediately rather than after a first input.
+#ifndef __vita__
             if (ImGui::IsWindowAppearing()) {
                 ImGui::SetNavCursorVisible(true);
             }
+#endif
             ImGui::Text("%s", curModal.message_.c_str());
             UIWidgets::PushStyleButton(THEME_COLOR);
             if (ImGui::Button(curModal.button1_.c_str())) {

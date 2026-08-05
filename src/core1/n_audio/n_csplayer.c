@@ -103,12 +103,24 @@ void n_alCSPNew(N_ALCSPlayer *seqp, ALSeqpConfig *c)
      */
     seqp->maxChannels = c->maxChannels;
     seqp->chanState = alHeapAlloc(hp, c->maxChannels, sizeof(ALChanState) );
+#ifndef _DEBUG
+    if (seqp->chanState == NULL) {
+        __osError(ERR_ALHEAPNOFREE, 1, sizeof(ALChanState));
+        return;
+    }
+#endif
     __n_initChanState((ALSeqPlayer*)seqp);	/* sct 11/6/95 */
     
     /*
      * init the voice state array
      */
     voices = alHeapAlloc(hp, c->maxVoices, sizeof(ALVoiceState));
+#ifndef _DEBUG
+    if (voices == NULL) {
+        __osError(ERR_ALHEAPNOFREE, 1, sizeof(ALVoiceState));
+        return;
+    }
+#endif
     seqp->vFreeList = 0;
     for (i = 0; i < c->maxVoices; i++) {
         vs = &voices[i];
@@ -123,6 +135,12 @@ void n_alCSPNew(N_ALCSPlayer *seqp, ALSeqpConfig *c)
      * init the event queue
      */
     items = alHeapAlloc(hp, c->maxEvents, sizeof(ALEventListItem));
+#ifndef _DEBUG
+    if (items == NULL) {
+        __osError(ERR_ALHEAPNOFREE, 1, sizeof(ALEventListItem));
+        return;
+    }
+#endif
     alEvtqNew(&seqp->evtq, items, c->maxEvents);
 
     

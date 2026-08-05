@@ -29,6 +29,11 @@
 #include "src/port/Enhancements/Events/Hooks/Events.h"
 #include "UI/LighthouseModMenuWindow.h"
 
+#ifdef __vita__
+#include <vitasdk.h>
+int _newlib_heap_size_user = 256 * 1024 * 1024;
+#endif
+
 extern "C" {
 #include "enums.h"
 #include "core1/core1.h"
@@ -275,7 +280,31 @@ void push_frame() {
 #define SDL_main main
 #endif
 
+#ifdef __vita__
+extern "C" void *vita_main(void *argv);
+
+int main(int argc, char *argv[]) {
+	sceSysmoduleLoadModule(SCE_SYSMODULE_RAZOR_CAPTURE);
+    scePowerSetArmClockFrequency(444);
+    scePowerSetBusClockFrequency(222);
+    scePowerSetGpuClockFrequency(222);
+    scePowerSetGpuXbarClockFrequency(166);
+    sceIoMkdir("ux0:data/lighthouse/shader_cache", 0777);
+    
+    sceClibPrintf("Starting main thread...\n");
+    pthread_t t;
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+    pthread_attr_setstacksize(&attr, 2 * 1024 * 1024);
+    pthread_create(&t, &attr, vita_main, NULL);
+    return sceKernelExitDeleteThread(0);
+}
+
+void *vita_main(void *argv) {
+	int argc = 0;
+#else
 int SDL_main(int argc, char* argv[]) {
+#endif
 #ifdef _WIN32
     timeBeginPeriod(1);
 #endif
