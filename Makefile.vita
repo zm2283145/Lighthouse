@@ -40,7 +40,7 @@ GAME_SOURCES := src/BGS src/BGS/ch src/boot src/CC src/CC/ch src/CC/ma src/CCW s
 	src/port/Rando/CustomObject src/port/Rando/Logic src/port/Rando/Logic/Regions src/port/Rando/MiscBehavior src/port/Rando/ObjectBehavior src/port/Rando/StaticData \
 	src/port/Resource/Alt src/port/Resource/Importers src/port/Resource/Type src/port/Romhack src/port/Romhack/Shared src/port/Romhack/Specific \
 	src/port/UI/DeveloperTools src/RBB src/SM src/SM/ch src/TTC src/TTC/ch src/TTC/ma src/RBB/ch lib/ultralib/gu lib/ultralib/audio src/core2/sfx \
-	src/port/Enhancements/Gameplay
+	src/port/Enhancements/Gameplay src/port/Enhancements/Cosmetics src/port/Rando/Spoiler
 
 SOURCES := $(LUS_SOURCES) $(TORCH_SOURCES) $(GAME_SOURCES)
 

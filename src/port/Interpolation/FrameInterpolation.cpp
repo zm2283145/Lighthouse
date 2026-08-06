@@ -661,7 +661,7 @@ void BuildInterpolationCache() {
     // model through itself, so measure the jump against the model's own size.
     const std::vector<AnimVtxData>& currAnimVtxs = gRenderCurr->animVtxs;
     const std::vector<AnimVtxData>& prevAnimVtxs = gRenderPrev->animVtxs;
-    const std::unordered_map<uint64_t, uint32_t>& prevAnimVtxMap = gRenderPrev->sigToAnimVtx;
+    const robin_hood::unordered_map<uint64_t, uint32_t>& prevAnimVtxMap = gRenderPrev->sigToAnimVtx;
     gCache.pairedAnimVtxs.reserve(currAnimVtxs.size());
     for (uint32_t i = 0; i < currAnimVtxs.size(); i++) {
         const AnimVtxData& c = currAnimVtxs[i];
