@@ -319,7 +319,11 @@ void audioManager_create(void) {
 
     sn_alConfig.maxVVoices = 24;
     sn_alConfig.maxPVoices = 24;
+#ifdef __vita__
+    sn_alConfig.maxUpdates = 0x80;
+#else
     sn_alConfig.maxUpdates = 0x100; // [port] doubled — 64-bit param slots are larger, demand-based audio may call n_alAudioFrame multiple times per game frame
+#endif
     sn_alConfig.dmaproc = (void *) audioManager_DMAInitProc;
     sn_alConfig.fxType = AL_FX_CUSTOM;
     sn_alConfig.params = sEffectsChain;
