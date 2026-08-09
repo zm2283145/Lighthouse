@@ -46,6 +46,18 @@ void audioManagerThread_entry(void* arg);
 void core1_15B30_sendMesg3ToRenderThread(void);
 OSMesgQueue* thread5_getTaskQueue(void);
 OSMesgQueue* thread5_getSyncQueue(void);
+
+#ifdef __vita__
+int __wrap_pte_osSemaphorePost(SceUID handle, int count) {
+	SceKernelSemaInfo info;
+	info.size = sizeof(SceKernelSemaInfo);
+	sceKernelGetSemaInfo(handle, &info);
+	if (info.currentCount < info.maxCount) {
+		sceKernelSignalSema(handle, count);
+	}
+	return 0;
+}
+#endif
 }
 
 // The game tick runs on its own thread and submits display lists through the
