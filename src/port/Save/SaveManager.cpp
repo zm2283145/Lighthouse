@@ -815,6 +815,8 @@ std::string createFileName(int fileNum) {
     return "file" + std::to_string(SlotToFileIndex(fileNum)) + ".json";
 }
 
+ShipSaveData ship;
+
 void SaveManager_Init() {
     LoadGlobalData();
 
@@ -890,7 +892,7 @@ void SaveManager_Init() {
         OnSaveClear* ev = (OnSaveClear*)event;
         SaveData* saveData = (SaveData*)ev->result;
 
-        ShipSaveData ship = saveData->shipSaveData; // Retain ShipSaveData during Save Process
+        ship = saveData->shipSaveData; // Retain ShipSaveData during Save Process
 
         u8* savedata = (u8*)saveData;
         int i;
