@@ -59,6 +59,10 @@
 #include <port/switch/SwitchImpl.h>
 #endif
 
+#ifdef __vita__
+#include <vitasdk.h>
+#endif
+
 const float imguiScaleOptionToValue[4] = { 0.75f, 1.0f, 1.5f, 2.0f };
 std::shared_ptr<Fast::Fast3dWindow> lhFast3dWindow;
 const uint32_t defaultImGuiScale = 1;
@@ -1191,6 +1195,8 @@ void GameEngine::RelaunchIfRequested(int argc, char* argv[]) {
 #elif defined(__linux__) || defined(__APPLE__)
     execv(argv[0], argv);
     SPDLOG_ERROR("Relaunch failed: execv error {}", strerror(errno));
+#elif (__vita__)
+	sceAppMgrLoadExec("app0:eboot.bin", NULL, NULL);
 #endif
 }
 
