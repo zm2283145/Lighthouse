@@ -41,6 +41,10 @@ extern "C" {
 
 #else
 
+#ifdef __vita__
+#define __assert
+#endif
+
 #ifndef __assert
 extern void __assert(const char *, const char *, int);
 #endif
