@@ -41,7 +41,7 @@ extern "C" {
 
 #else
 
-#ifndef __vita__
+#ifndef __assert
 extern void __assert(const char *, const char *, int);
 #endif
 #ifdef __ANSI_CPP__
