@@ -69,6 +69,7 @@ struct1Es D_80372030[] = {
 
 /* .bss */
 struct {
+	uint32_t padding[256];
     u8 unk0;
     bk_vector(struct1Ds) *unk4;
 } D_80386140;
