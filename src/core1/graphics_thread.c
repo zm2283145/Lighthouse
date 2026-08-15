@@ -497,7 +497,7 @@ void thread5_entry(void *arg) {
         }
         ThreadWatchdog_Beat(WATCHDOG_THREAD5); // [port] one beat per serviced message
         thread5_checkAndExecutePreNMI();
-        if ((uintptr_t)msg.ptr < 100) {
+        if (msg.data32 < 100) {
             if (msg.data32 == THREAD5_MESSAGE_EVENT_SYNC) { thread5_handleSyncEvent(); }
             else if (msg.data32 == THREAD5_MESSAGE_EVENT_VI_RETRACE)  { thread5_handleVIRetraceEvent(); }
             else if (msg.data32 == THREAD5_MESSAGE_EVENT_DP)          { thread5_handleDPEvent(); }
