@@ -6,7 +6,7 @@
 This is a port of Lighthouse (v.1.0.3 with some improvements from develop branch) for PSVita.
 
 ## Setup Instructions
-- Download [Lighthouse v.1.0.3](https://github.com/HarbourMasters/Ghostship/releases/tag/2.0.0) for PC.
+- Download [Lighthouse v.1.0.3](https://github.com/HarbourMasters/Lighthouse/releases/tag/1.0.3) for PC.
 - Follow its instructions to generate `bk.o2r`.
 - Extract `lighthouse.zip` from the Release tab in `ux0:data`.
 - Place `bk.o2r` and `lighthouse.o2r` in `ux0:data/lighthouse`.
