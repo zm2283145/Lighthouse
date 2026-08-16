@@ -1,6 +1,26 @@
 [comment]: <> (Todo: Make Light Mode Image)
 [comment]: <> (Todo: Make Dark Mode Image)
 
+# Lighthouse Vita
+
+This is a port of Lighthouse (v.1.0.3 with some improvements from develop branch) for PSVita.
+
+## Setup Instructions
+- Download [Lighthouse v.1.0.3](https://github.com/HarbourMasters/Ghostship/releases/tag/2.0.0) for PC.
+- Follow its instructions to generate `bk.o2r`.
+- Extract `lighthouse.zip` from the Release tab in `ux0:data`.
+- Place `bk.o2r` and `lighthouse.o2r` in `ux0:data/lighthouse`.
+- Install the vpk from the Release tab.
+
+## Credits
+- Standard-Republic for the Livearea assets.
+- TheDarthBellic and withLogic for testing the homebrew.
+
+## vitaGL flags
+HAVE_PTHREAD=1 NO_DEBUG=1 HAVE_GLSL_TEXTURE_SIZE=1 INDICES_SPEEDHACK=1
+
+# Original Readme
+
 # Lighthouse
 Harbour Masters port of Banjo Kazooie
 
