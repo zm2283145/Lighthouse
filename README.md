@@ -14,7 +14,7 @@ This is a port of Lighthouse (v.1.0.3 with some improvements from develop branch
 
 ## Credits
 - Standard-Republic for the Livearea assets.
-- TheDarthBellic and withLogic for testing the homebrew.
+- Darth Bellic and withLogic for testing the homebrew.
 
 ## vitaGL flags
 HAVE_PTHREAD=1 NO_DEBUG=1 HAVE_GLSL_TEXTURE_SIZE=1 INDICES_SPEEDHACK=1
