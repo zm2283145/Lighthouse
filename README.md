@@ -9,7 +9,7 @@ This is a port of Lighthouse (v.1.0.3 with some improvements from develop branch
 - Download [Lighthouse v.1.0.3](https://github.com/HarbourMasters/Lighthouse/releases/tag/1.0.3) for PC.
 - Follow its instructions to generate `bk.o2r`.
 - Extract `lighthouse.zip` from the Release tab in `ux0:data`.
-- Place `bk.o2r` and `lighthouse.o2r` in `ux0:data/lighthouse`.
+- Place `assets` folder, `bk.o2r` and `lighthouse.o2r` from the PC install in `ux0:data/lighthouse`.
 - Install the vpk from the Release tab.
 
 ## Credits
