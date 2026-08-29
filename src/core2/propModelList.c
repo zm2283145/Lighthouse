@@ -6,6 +6,7 @@
 
 extern f32 modelRender_func_8033A244(f32);
 extern void *func_80255888(void *arg0);
+extern int ResourceMgr_IsModelAsset(uint32_t assetId);
 
 typedef struct{
     BKModelBin *unk0;
@@ -36,6 +37,9 @@ void propModelList_drawModel(Gfx **gfx, Mtx **mtx, Vtx **vtx, f32 arg3[3], f32 a
     BKModelBin * sp2C;
     
     sp2C = propModelList_getModel(arg6);
+    if (sp2C == NULL) {
+        return;
+    }
     modelRender_func_8033A244(3700.0f);
     modelRender_func_8033A28C(1);
     modelRender_setDepthMode(MODEL_RENDER_DEPTH_FULL);
@@ -63,14 +67,32 @@ void propModelList_drawSprite(Gfx **gfx, Mtx **mtx, Vtx **Vtx, f32 arg3[3], f32 
 }
 
 BKModelBin *propModelList_getModel(s32 arg0){
+    s32 asset_id;
+
+    if (D_80382390 == NULL || arg0 < 0 || arg0 >= 0x2A2) {
+        return NULL;
+    }
+
+    asset_id = MODEL_ASSET_OFFSET + arg0;
     if(D_80382390[arg0].unk0 == NULL){
-        D_80382390[arg0].unk0 = assetcache_get(0x2d1 + arg0);
+        D_80382390[arg0].unk0 = assetcache_get(asset_id);
     }
     D_80382390[arg0].timestamp = globalTimer_getTime();
+
+    if (D_80382390[arg0].unk0 != NULL && !ResourceMgr_IsModelAsset(asset_id)) {
+        return NULL;
+    }
+
     return D_80382390[arg0].unk0;
 }
 
 BKModelBin *propModelList_getModelIfActive(s32 arg0){
+    if (D_80382390 == NULL || arg0 < 0 || arg0 >= 0x2A2 || D_80382390[arg0].unk0 == NULL) {
+        return NULL;
+    }
+    if (!ResourceMgr_IsModelAsset(MODEL_ASSET_OFFSET + arg0)) {
+        return NULL;
+    }
     return D_80382390[arg0].unk0;
 }
 
