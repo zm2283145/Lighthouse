@@ -1,6 +1,8 @@
 TARGET := Lighthouse
 
 TITLE := BANJO0064
+TROPHY_COMM_ID := BANJO0064_00
+TROPHY_PACK := build-vita/TROPHY.TRP
 
 TORCH_INCLUDES := Torch/src Torch/src/utils Torch/lib Torch Torch/src/factories \
 	Torch/lib/n64graphics Torch/lib/binarytools
@@ -151,14 +153,19 @@ ASFLAGS  = $(CFLAGS)
 
 all: $(TARGET).vpk
 
-$(TARGET).vpk: $(TARGET).velf
+$(TROPHY_PACK): tools/build_vita_trophy_pack.py vita/trophy/platinum.png $(wildcard vita/trophy/achievements/*.png) livearea/icon0.png
+	mkdir -p $(dir $@)
+	python tools/build_vita_trophy_pack.py --out $@ --livearea-icon livearea/icon0.png
+
+$(TARGET).vpk: $(TARGET).velf $(TROPHY_PACK)
 	vita-make-fself -c -s $< eboot.bin
 	vita-mksfoex -s TITLE_ID=$(TITLE) -d ATTRIBUTE2=12 "$(TARGET)" param.sfo
 	vita-pack-vpk -s param.sfo -b eboot.bin $(TARGET).vpk \
 		-a livearea/icon0.png=sce_sys/icon0.png \
 		-a livearea/bg.png=sce_sys/livearea/contents/bg.png \
 		-a livearea/startup.png=sce_sys/livearea/contents/startup.png \
-		-a livearea/template.xml=sce_sys/livearea/contents/template.xml
+		-a livearea/template.xml=sce_sys/livearea/contents/template.xml \
+		-a $(TROPHY_PACK)=sce_sys/trophy/$(TROPHY_COMM_ID)/TROPHY.TRP
 
 prepare: f $(OBJS_PREPARE)
 
@@ -183,4 +190,4 @@ $(TARGET).elf: $(FINAL_OBJS)
 objects: $(OBJS)
 
 clean: $(OBJS_CLEAN)
-	@rm -rf $(TARGET).velf $(TARGET).elf $(FINAL_OBJS) eboot.bin $(TARGET).vpk param.sfo
+	@rm -rf $(TARGET).velf $(TARGET).elf $(FINAL_OBJS) eboot.bin $(TARGET).vpk param.sfo build-vita

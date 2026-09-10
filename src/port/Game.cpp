@@ -29,6 +29,7 @@
 #include "ShipInit.hpp"
 #include "src/port/Enhancements/Events/Hooks/Events.h"
 #include "UI/LighthouseModMenuWindow.h"
+#include "VitaTrophies.h"
 
 #ifdef __vita__
 #include <vitasdk.h>
@@ -262,6 +263,9 @@ void push_frame() {
     }
 
     GameEngine::Instance->StartFrame();
+#ifdef __vita__
+    VitaTrophies::Pump();
+#endif
     port_animVtx_beginTick();
     const bool recordInterpolation = GameEngine::IsInterpolationEnabled();
     if (recordInterpolation) {
@@ -341,6 +345,11 @@ int SDL_main(int argc, char* argv[]) {
     }
 
     GameEngine::Create(argc, argv);
+#ifdef __vita__
+    // vitaGL is available after engine creation, so the setup dialog can
+    // import the bundled pack before the game core starts running.
+    VitaTrophies::Register();
+#endif
     // Both threads are created during core1_init, so allowlist them first.
     OS_EnableThreadEntry((void*)viMgr_entry);
     EnableThread5();
