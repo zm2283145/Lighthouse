@@ -12,7 +12,7 @@ import zlib
 from pathlib import Path
 from xml.sax.saxutils import escape
 
-COMM_ID = "BANJO0064_00"
+COMM_ID = "BANJ00064_00"
 
 # Display order, names, descriptions and point values mirror the 60-entry
 # RetroAchievements base set for game 10210. Vita ID 000 is the platinum.
@@ -79,6 +79,20 @@ RA_TROPHIES = [
     ("Strange Banjo", "Enter bottlesbonusfive in the sandcastle.", 5),
 ]
 
+NTSC_GLITCH_TROPHIES = [
+    ("Bear of the Mountain [NTSC]", "In Mumbo's Mountain, obtain the Jiggy on top of the termite hill without turning into a termite", 5),
+    ("Kazooie Hill [NTSC]", "Obtain the Jiggy on top of Mumbo Mountain's door without turning into a termite", 5),
+    ("Quick Dive [NTSC]", "Obtain the underwater Honeycomb in Treasure Trove Cove without pressing B to dive underwater", 5),
+    ("Underwater Dentistry [NTSC]", "In Clanker's Cavern, obtain the toothache Jiggy without raising Clanker to the surface", 5),
+    ("Gesundheit [NTSC]", "In Gobi's Valley, obtain the Jiggy inside the sphinx without opening the door", 10),
+    ("Jail Break [NTSC]", "Obtain the Jiggy inside Grunty's statue without pressing the Bubblegloop Swamp Grunty switch", 5),
+    ("Mummified [NTSC]", "Obtain the Jiggy in the sarcophagus without pressing the Gobi's Valley Grunty switch", 5),
+    ("Swimming With the Fishes [NTSC]", "Near Bubblegloop Swamp, swim in the piranha water and collect a golden feather while below maximum", 5),
+    ("Well Well Well [NTSC]", "In Mad Monster Mansion, obtain the well Jiggy without pressing B to dive underwater", 5),
+    ("Beaver Bother [NTSC]", "Open Gnawty's house in Spring and swim to the top without pressing the Summer, Fall, or Winter switch", 5),
+    ("Furnace Fun Skip [NTSC]", "Perform the Furnace Fun Skip and stand next to Tooty", 10),
+]
+
 def grade(points: int) -> str:
     return "G" if points >= 25 else "S" if points >= 10 else "B"
 
@@ -86,6 +100,9 @@ TROPHIES = [(0, "P", -1, None, "The Bear and Bird's Shining Legacy",
              "Earn every Banjo-Kazooie trophy.")] + [
     (index, grade(points), 0, None, name, detail)
     for index, (name, detail, points) in enumerate(RA_TROPHIES, 1)
+]+ [
+    (index, grade(points), -1, 1, name, detail)
+    for index, (name, detail, points) in enumerate(NTSC_GLITCH_TROPHIES, 61)
 ]
 
 
@@ -172,16 +189,22 @@ def xml(configuration_only: bool = False) -> bytes:
     signature = "x" * 320
     lines = [
         f'<!--Sce-Np-Trophy-Signature: {signature}-->',
-        '<trophyconf version="1.1" platform="psp2" policy="normal">',
+        '<trophyconf version="1.1" platform="psp2" policy="large">',
         f' <npcommid>{COMM_ID}</npcommid>',
-        ' <trophyset-version>01.00</trophyset-version>',
+        ' <trophyset-version>01.03</trophyset-version>',
         ' <parental-level license-area="default">0</parental-level>',
     ]
     if not configuration_only:
         lines.extend((
             ' <title-name>Banjo-Kazooie</title-name>',
             ' <title-detail>The Lighthouse port trophy set, based on the RetroAchievements game 10210 base set.</title-detail>',
+            ' <group id="001">',
+            '  <name>Glitchy Fun</name>',
+            '  <detail>NTSC achievements from the RetroAchievements Glitch Showcase subset.</detail>',
+            ' </group>',
         ))
+    else:
+        lines.append(' <group id="001"/>')
     for tid, grade, parent, group, name, detail in TROPHIES:
         attrs = f'id="{tid:03d}" hidden="no" ttype="{grade}" pid="{parent:03d}"'
         if parent < 0:
@@ -232,9 +255,11 @@ def main() -> None:
     platinum = Path(__file__).parent.parent / 'vita' / 'trophy' / 'platinum.png'
     trophy_assets = Path(__file__).parent.parent / 'vita' / 'trophy' / 'achievements'
     missing_assets = [
-        trophy_assets / f'{tid:03d}.png'
+        ((trophy_assets / 'glitch_ntsc' / f'{tid:03d}.png')
+         if tid >= 61 else (trophy_assets / f'{tid:03d}.png'))
         for tid, *_ in TROPHIES
-        if tid != 0 and not (trophy_assets / f'{tid:03d}.png').is_file()
+        if tid != 0 and not ((trophy_assets / 'glitch_ntsc' / f'{tid:03d}.png')
+                            if tid >= 61 else (trophy_assets / f'{tid:03d}.png')).is_file()
     ]
     if missing_assets:
         names = ', '.join(path.name for path in missing_assets)
@@ -251,9 +276,11 @@ def main() -> None:
         # 320x176 and individual trophy images are 240x240. LiveArea's icon
         # is only 128x128, so never insert it into the archive verbatim.
         'ICON0.PNG': resize_png(args.livearea_icon, 320, 176),
+        'GR001.PNG': resize_png(trophy_assets / 'glitch_ntsc' / '061.png', 320, 176),
     }
     for tid, *_ in TROPHIES:
-        asset = trophy_assets / f'{tid:03d}.png'
+        asset = ((trophy_assets / 'glitch_ntsc' / f'{tid:03d}.png')
+                 if tid >= 61 else (trophy_assets / f'{tid:03d}.png'))
         files[f'TROP{tid:03d}.PNG'] = (
             resize_png(platinum, 240, 240) if tid == 0 else resize_png(asset, 240, 240)
         )
