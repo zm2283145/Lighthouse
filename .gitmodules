@@ -23,3 +23,6 @@
 [submodule "lib/robin-hood"]
 	path = lib/robin-hood
 	url = https://github.com/martinus/robin-hood-hashing.git
+[submodule "lib/vitaGL"]
+	path = lib/vitaGL
+	url = https://github.com/Rinnegatamante/vitaGL.git

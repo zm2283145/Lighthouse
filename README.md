@@ -21,6 +21,10 @@ HAVE_PTHREAD=1 NO_DEBUG=1 HAVE_GLSL_TEXTURE_SIZE=1 INDICES_SPEEDHACK=1
 
 Tested vitaGL revision: `1ffcb99e65d979722c37eedd7298e9487f8eedb1`
 
+The Vita build uses the pinned `lib/vitaGL` submodule directly. Its headers and
+library take precedence over the copies installed in `VITASDK`, so building
+Lighthouse does not modify or depend on the SDK-wide vitaGL installation.
+
 # Original Readme
 
 # Lighthouse

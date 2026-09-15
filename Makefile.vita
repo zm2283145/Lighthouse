@@ -5,6 +5,8 @@ TITLE := BANJ00064
 TROPHY_COMM_ID := BANJ00064_00
 TROPHY_PACK := build-vita/TROPHY.TRP
 VITA_DEPS_PREFIX := build-vita/deps
+VITAGL_LOCAL_DIR := lib/vitaGL
+VITAGL_LOCAL_LIB := $(VITAGL_LOCAL_DIR)/libvitaGL.a
 
 TORCH_INCLUDES := Torch/src Torch/src/utils Torch/lib Torch Torch/src/factories \
 	Torch/lib/n64graphics Torch/lib/binarytools
@@ -55,7 +57,7 @@ INCLUDES := $(LUS_INCLUDES) $(TORCH_INCLUDES) lib/ultralib/include lib/thread-po
 	src/audio src/buffers src/engine src/game src/goddard src/menu src/pc src/port src/port/Enhancements \
 	src/port/enhancements/game-interactor src/port/api textures src .
 
-LIBS = -L$(VITA_DEPS_PREFIX)/lib -lstorm -lgfxd -lzip -lbz2 -lzstd -lz -lyaml-cpp -llzma -lssl -lcrypto -lstdc++ -lpng16 \
+LIBS = -L$(VITAGL_LOCAL_DIR) -L$(VITA_DEPS_PREFIX)/lib -lstorm -lgfxd -lzip -lbz2 -lzstd -lz -lyaml-cpp -llzma -lssl -lcrypto -lstdc++ -lpng16 \
 	-Wl,--whole-archive -lpthread -Wl,--no-whole-archive -lopenal \
 	-ltinyxml2 -lSDL2 -lvorbisfile -lvorbis -logg -lvitaGL -lvitashark -lSceShaccCgExt -ltaihen_stub -lmathneon -lSceAudioIn_stub \
 	-lSceIme_stub -lSceKernelDmacMgr_stub -lSceGxm_stub -lSceDisplay_stub -lSceTouch_stub -lSceHid_stub -lSceCtrl_stub -lSceNet_stub \
@@ -105,7 +107,7 @@ CXX = $(PREFIX)-g++
 CFLAGS = -g -Wl,-q,--allow-multiple-definition,--wrap,pte_osSemaphorePost,--pic-veneer -O3 -ffast-math -fno-short-enums -fsigned-char \
 	$(foreach dir,$(INCLUDES),-I$(dir)) -fno-strict-aliasing -fno-optimize-sibling-calls \
 	-Wno-narrowing -std=gnu17 -DImTextureID=void\* -DIMGUI_DISABLE_DEFAULT_SHELL_FUNCTIONS -DIMGUI_IMPL_OPENGL_ES2 -DSPDLOG_ACTIVE_LEVEL=0 \
-	-I$(VITA_DEPS_PREFIX)/include/SDL2 -I$(VITASDK)/$(PREFIX)/include/SDL2 -DENABLE_OPENGL=1 -DNON_EQUIVALENT=1 \
+	-I$(VITAGL_LOCAL_DIR)/source -I$(VITA_DEPS_PREFIX)/include -I$(VITA_DEPS_PREFIX)/include/SDL2 -I$(VITASDK)/$(PREFIX)/include/SDL2 -DENABLE_OPENGL=1 -DNON_EQUIVALENT=1 \
 	-D_LANGUAGE_C -D_USE_MATH_DEFINES -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS -DNAUDIO_SUPPORT \
 	-DAVOID_UB=1 -DN_MICRO=1 -DF3DEX_GBI=1 -DGBI_FLOATS=1 -DNON_MATCHING=1 \
 	-DVERSION_US=1 -DENABLE_RUMBLE=1 -DIMGUI_DEFINE_MATH_OPERATORS -DBK64_SUPPORT -DENABLE_VITA_TROPHIES \
@@ -185,7 +187,10 @@ f:
 	$(PREFIX)-strip -g $<
 	vita-elf-create $< $@
 
-$(TARGET).elf: $(FINAL_OBJS)
+$(VITAGL_LOCAL_LIB):
+	$(MAKE) -C $(VITAGL_LOCAL_DIR) HAVE_PTHREAD=1 NO_DEBUG=1 HAVE_GLSL_TEXTURE_SIZE=1 INDICES_SPEEDHACK=1
+
+$(TARGET).elf: $(FINAL_OBJS) | $(VITAGL_LOCAL_LIB)
 	$(CXX) $(CXXFLAGS) $^ $(LIBS) -o $@
 
 objects: $(OBJS)
